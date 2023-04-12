@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#SBATCH -p RM-shared
+#SBATCH -t 03:00:00
+#SBATCH --ntasks-per-node=64
+#SBATCH -J StringTie
+
+cd /ocean/projects/bio230007p/iwang1
+### Clone stringtie
+if [ ! -d "stringtie" ]; then
+    git clone https://github.com/gpertea/stringtie
+    cd stringtie
+    make release
+    cd ../
+    echo "StringTie installed"
+fi
+
+### Clone gffread
+if [ ! -d "gffread" ]; then
+    git clone https://github.com/gpertea/gffread
+    cd gffread
+    make release
+    cd ../
+    echo "gffread installed"
+fi
+
+### Run stringtie
+### -o <output.gtf> <input.sorted.bam>
+./stringtie/stringtie -o wolf.gtf DRR453603.sorted.bam
+echo "Finished StringTie"
+### Run gffead
+### -w <output.fa> -g <input.fa input.gtf>
+./gffread/gffread -w wolf.fa -g GCA_905319855.2_mCanLor1.2_genomic.fna wolf.gtf
+echo "gffread finished"
+
