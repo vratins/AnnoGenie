@@ -29,7 +29,7 @@ fi
 ./stringtie/stringtie -o wolf.gtf DRR453603.sorted.bam
 echo "Finished StringTie"
 ### Run gffead
-### -w <output.fa> -g <input.fa input.gtf>
+### -w <output.fa> -g <input.fa> <input.gtf>
 ./gffread/gffread -w wolf.fa -g GCA_905319855.2_mCanLor1.2_genomic.fna wolf.gtf
 echo "gffread finished"
 
