@@ -5,6 +5,22 @@ rna=$3 ### Unzip rna file for related species, we can make a test to check input
 wgs_ref=$4 ## Unzip wgs file for related species
 output=$5 ### Output name, string
 
+### Test input file
+if [[ "$wgs" != *".fa" ]] && [[ "$wgs" != *".fasta" ]] && [[ "$wgs" != *".fna" ]] && [[ "$wgs" != *".fq" ]] && [[ "$wgs" != *".fastq" ]]; then
+        echo "Please provide fasta or fastq file for whole genomic sequence of unannotated species"
+        exit
+fi
+if [[ "$rna" != *".fa" ]] && [[ "$rna" != *".fasta" ]] && [[ "$rna" != *".fna" ]] && [[ "$rna" != *".fq" ]] && [[ "$rna" != *".fastq" ]]; then
+        echo "Please provide fasta file for RNA Seq data of related species"
+        exit
+fi
+if [[ "$wgs_ref" != *".fa" ]] && [[ "$wgs_ref" != *".fasta" ]] && [[ "$wgs_ref" != *".fna" ]] && [[ "$wgs_ref" != *".fq" ]] && [[ "$wgs_ref" != *".fastq" ]]; then
+        echo "Please provide fasta file for whole genomic sequenceof of related species"
+        exit
+fi
+
+
+
 
 
 ## Build index
