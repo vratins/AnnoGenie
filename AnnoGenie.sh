@@ -1,3 +1,4 @@
+#!/bin/bash
 ## Whole genomic sequence and RNA seq path
 isPE=$1 ### Is the rna seq PE or SE
 wgs=$2 ### Unzip wgs file for test species, we can make a test to check input file
