@@ -1,8 +1,9 @@
 ## Whole genomic sequence and RNA seq path
 isPE=$1 ### Is the rna seq PE or SE
-wgs=$2 ### Unzip or zip wgs file, we can make a test to check input file
-rna=$3 ### Unzip or zip wgs file, we can make a test to check input file
-output=$4 ### Output name, string
+wgs=$2 ### Unzip wgs file for test species, we can make a test to check input file
+rna=$3 ### Unzip rna file for related species, we can make a test to check input file
+wgs_ref=$4 ## Unzip wgs file for related species
+output=$5 ### Output name, string
 
 
 
@@ -46,5 +47,22 @@ if [ ! -d "gffread" ]; then
     echo "gffread installed"
 fi
 
+### Transcripts
 ./stringtie/stringtie -o $output.gtf $output.sorted.bam
+### Convert gtf to fa
 ./gffread/gffread -w $output.fa -g $wgs $output.gtf
+
+
+### Make database for blast using wgs of related species
+makeblastdb -dbtype nucl -in $wgs_ref -out $output.blastdb
+## Blast
+blastn -query $output.gtf -db $output.blastdb -out $output.temp.txt -outfmt 6 -num_threads 64
+## Only select most hit
+awk '!seen[$1]++'  $output.temp.txt >  $output.txt
+## blast format -> gff3
+if [ ! -d "genomeGTFtools" ]; then
+    wget https://github.com/wrf/genomeGTFtools/archive/refs/heads/master.zip -O genomeGTFtools.zip
+    unzip genomeGTFtools.zip && mv genomeGTFtools-master genomeGTFtools
+fi
+## To gff3
+./genomeGTFtools/blast2gff.py -b $output.txt > $output.gff3
