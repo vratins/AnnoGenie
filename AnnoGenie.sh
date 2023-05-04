@@ -75,9 +75,9 @@ mkdir QC
 cd QC
 
 if [ $isPE == "PE" ]; then
-    fastqc $file1 $file2
+    fastqc $file1 $file2 -o .
 else 
-    fastqc $file1 
+    fastqc $file1 -o .
 fi
 cd ..
 
@@ -101,9 +101,9 @@ mkdir QC2
 cd QC2
 
 if [ $isPE == "PE" ]; then
-    fastqc ../trim/output_forward_paired.fastq ../trim/output_reverse_paired.fastq
+    fastqc ../trim/output_forward_paired.fastq ../trim/output_reverse_paired.fastq -o .
 else 
-    fastqc ../trim/output.fastq
+    fastqc ../trim/output.fastq -o .
 fi
 
 cd ..
@@ -154,7 +154,7 @@ if [ ! -d "gffread" ]; then
 fi
 
 ### Transcripts
-./stringtie/stringtie -o $output.gtf ./align/$output.sorted.bam
+./stringtie/stringtie -o $output.gtf $output.sorted.bam
 echo "Finish Stringtie"
 ### Convert gtf to fa
 ./gffread/gffread -w $output.fa -g $wgs $output.gtf
