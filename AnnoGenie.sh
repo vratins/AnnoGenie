@@ -10,7 +10,12 @@ output=$7 ### Output name for unannotated species, string
 
 ### sample command for downloading pair-end rna seq file
 ### fastq-dump --outdir [output directory] --split-files [ID]
-
+### For PSC
+module load BLAST
+module load hisat2
+module load FastQC
+module load samtools
+module load Trimmomatic
 
 
 ### Test input file
