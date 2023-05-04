@@ -38,7 +38,7 @@ if [[ $count -eq 1 ]] && [[ $isPE=="PE" ]]; then
   echo "The directory $rna contains one file but the mode is Pair-end."
   exit
 elif [[ $count -eq 2 ]] && [[ $isPE=="SE" ]]; then
-  echo "The directory $rna contains two files but the mode is Pair-end."
+  echo "The directory $rna contains two files but the mode is Single-end."
   exit
 else
   echo "The directory $rna contains $count files, proceed to next test."
