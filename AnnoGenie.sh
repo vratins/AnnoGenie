@@ -131,7 +131,7 @@ fi
 cd ..
 ### convert to bam and sort
 samtools view -bS ./align/$output.sam > $output.bam
-samtools sort ./align/$output.bam -o $output.sorted.bam
+samtools sort $output.bam -o $output.sorted.bam
 
 
 
