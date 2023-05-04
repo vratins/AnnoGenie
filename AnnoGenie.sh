@@ -32,12 +32,11 @@ fi
 
 # Count the number of files in the rna directory
 count=$(ls -1 "$rna" | wc -l)
-
 # Check if input file and isPE option is compatible
-if [[ $count -eq 1 ]] && [[ $isPE=="PE" ]]; then
+if [[ $count -eq 1 ]] && [[ $isPE == "PE" ]]; then
   echo "The directory $rna contains one file but the mode is Pair-end."
   exit
-elif [[ $count -eq 2 ]] && [[ $isPE=="SE" ]]; then
+elif [[ $count -eq 2 ]] && [[ $isPE == "SE" ]]; then
   echo "The directory $rna contains two files but the mode is Single-end."
   exit
 else
@@ -48,50 +47,51 @@ fi
 # Check if all files in the directory end with ".fq" or ".fastq"
 if [[ $(find "$rna" -maxdepth 1 -type f ! -name "*.fq" ! -name "*.fastq" | wc -l) -ne 0 ]]; then
   echo "Not all files in $rna end with .fq or .fastq"
-  exit 1
+  exit
 fi
 
 echo "All files in $rna end with .fq or .fastq, proceed to fastQC"
 
-
+fq_files=$(find "$rna" -maxdepth 1 -type f \( -name "*.fq" -o -name "*.fastq" \))
 
 ### make working directory
 mkdir $wkdir
 cd $wkdir
-
-
 # Get the list of file names that end with ".fq" or ".fastq"
-fq_files=$(find "$1" -maxdepth 1 -type f \( -name "*.fq" -o -name "*.fastq" \))
 
-if [ $isPE=="PE" ]; then
+
+
+
+
+if [[ $isPE == "PE" ]]; then
+    
     file1=$(echo "$fq_files" | head -n 1)
     file2=$(echo "$fq_files" | head -n 2 | tail -n 1)
 else 
     file1=$(echo "$fq_files" | head -n 1)
-
+fi
 ### fastqc
-
 mkdir QC
 cd QC
 
-if [ $isPE=="PE" ]; then
+if [ $isPE == "PE" ]; then
     fastqc $file1 $file2
 else 
     fastqc $file1 
-
+fi
 cd ..
 
 mkdir trim
 cd trim
 ### trimmomatic
-if [ $isPE=="PE" ]; then
+if [ $isPE == "PE" ]; then
     trimmomatic PE $file1 $file2 output_forward_paired.fastq.gz output_forward_unpaired.fastq.gz output_reverse_paired.fastq.gz output_reverse_unpaired.fastq.gz ILLUMINACLIP:NexteraPE-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     gzip -d output_forward_paired.fastq.gz 
     gzip -d output_reverse_paired.fastq.gz
 else 
     trimmomatic SE $file1 output.fastq.gz ILLUMINACLIP:NexteraPE-PE:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:32
     gzip -d output.fastq.gz 
-
+fi
 
 cd ..
 
@@ -100,10 +100,11 @@ cd ..
 mkdir QC2
 cd QC2
 
-if [ $isPE=="PE" ]; then
+if [ $isPE == "PE" ]; then
     fastqc ../trim/output_forward_paired.fastq ../trim/output_reverse_paired.fastq
 else 
     fastqc ../trim/output.fastq
+fi
 
 cd ..
 
@@ -117,7 +118,7 @@ hisat2-build -f $wgs $related
 cd ..
 
 
-if [ $isPE=="PE" ]; then
+if [ $isPE == "PE" ]; then
     ### alignment PE
     hisat2 -q -x ./index/$related -1 ../trim/output_forward_paired.fastq -2 ../trim/output_reverse_paired.fastq -S $output.sam
 
@@ -127,12 +128,12 @@ else
 
 fi
 
-
-### convert to bam and sort
-samtools view -bS $output.sam > $output.bam
-samtools sort $output.bam -o $output.sorted.bam
-
 cd ..
+### convert to bam and sort
+samtools view -bS ./align/$output.sam > $output.bam
+samtools sort ./align/$output.bam -o $output.sorted.bam
+
+
 
 ### Clone stringtie
 if [ ! -d "stringtie" ]; then
@@ -154,14 +155,21 @@ fi
 
 ### Transcripts
 ./stringtie/stringtie -o $output.gtf ./align/$output.sorted.bam
+echo "Finish Stringtie"
 ### Convert gtf to fa
 ./gffread/gffread -w $output.fa -g $wgs $output.gtf
+echo "Finish gffread"
+
 
 
 ### Make database for blast using wgs of related species
 makeblastdb -dbtype nucl -in $wgs_ref -out $output.blastdb
+echo "Finish making database"
+
 ## Blast
 blastn -query $output.fa -db $output.blastdb -out $output.temp.txt -outfmt 6 -num_threads 64
+echo "Finish BLAST"
+
 ## Only select most hit
 awk '!seen[$1]++'  $output.temp.txt >  $output.txt
 ## blast format -> gff3
