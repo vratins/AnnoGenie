@@ -11,8 +11,8 @@ if [[ "$wgs" != *".fa" ]] && [[ "$wgs" != *".fasta" ]] && [[ "$wgs" != *".fna" ]
         echo "Please provide fasta or fastq file for whole genomic sequence of unannotated species"
         exit
 fi
-if [[ "$rna" != *".fa" ]] && [[ "$rna" != *".fasta" ]] && [[ "$rna" != *".fna" ]] && [[ "$rna" != *".fq" ]] && [[ "$rna" != *".fastq" ]]; then
-        echo "Please provide fasta file for RNA Seq data of related species"
+if [[ "$rna" != *".fq" ]] && [[ "$rna" != *".fastq" ]]; then
+        echo "Please provide fastq file for RNA Seq data of related species"
         exit
 fi
 if [[ "$wgs_ref" != *".fa" ]] && [[ "$wgs_ref" != *".fasta" ]] && [[ "$wgs_ref" != *".fna" ]] && [[ "$wgs_ref" != *".fq" ]] && [[ "$wgs_ref" != *".fastq" ]]; then
