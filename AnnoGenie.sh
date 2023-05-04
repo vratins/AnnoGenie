@@ -161,7 +161,7 @@ fi
 ### Make database for blast using wgs of related species
 makeblastdb -dbtype nucl -in $wgs_ref -out $output.blastdb
 ## Blast
-blastn -query $output.gtf -db $output.blastdb -out $output.temp.txt -outfmt 6 -num_threads 64
+blastn -query $output.fa -db $output.blastdb -out $output.temp.txt -outfmt 6 -num_threads 64
 ## Only select most hit
 awk '!seen[$1]++'  $output.temp.txt >  $output.txt
 ## blast format -> gff3
