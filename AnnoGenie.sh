@@ -18,15 +18,7 @@ if [[ "$wgs" != *".fa" ]] && [[ "$wgs" != *".fasta" ]] && [[ "$wgs" != *".fna" ]
         echo "Please provide fasta or fastq file for whole genomic sequence of unannotated species"
         exit
 fi
-<<<<<<< Updated upstream
-if [[ "$rna" != *".fq" ]] && [[ "$rna" != *".fastq" ]]; then
-        echo "Please provide fastq file for RNA Seq data of related species"
-        exit
-fi
-=======
 
-
->>>>>>> Stashed changes
 if [[ "$wgs_ref" != *".fa" ]] && [[ "$wgs_ref" != *".fasta" ]] && [[ "$wgs_ref" != *".fna" ]] && [[ "$wgs_ref" != *".fq" ]] && [[ "$wgs_ref" != *".fastq" ]]; then
         echo "Please provide fasta file for whole genomic sequenceof of related species"
         exit
@@ -140,6 +132,8 @@ fi
 samtools view -bS $output.sam > $output.bam
 samtools sort $output.bam -o $output.sorted.bam
 
+cd ..
+
 ### Clone stringtie
 if [ ! -d "stringtie" ]; then
     git clone https://github.com/gpertea/stringtie
@@ -159,7 +153,7 @@ if [ ! -d "gffread" ]; then
 fi
 
 ### Transcripts
-./stringtie/stringtie -o $output.gtf $output.sorted.bam
+./stringtie/stringtie -o $output.gtf ./align/$output.sorted.bam
 ### Convert gtf to fa
 ./gffread/gffread -w $output.fa -g $wgs $output.gtf
 
