@@ -25,33 +25,33 @@ if [[ "$wgs_ref" != *".fa" ]] && [[ "$wgs_ref" != *".fasta" ]] && [[ "$wgs_ref" 
 fi
 
 # Check if the rna argument is a directory
-if [[ ! -d "$4" ]]; then
-  echo "$4 is not a directory, plase provide the directory storing the RNAseq files"
+if [[ ! -d "$rna" ]]; then
+  echo "$rna is not a directory, plase provide the directory storing the RNAseq files"
   exit
 fi
 
 # Count the number of files in the rna directory
-count=$(ls -1 "$4" | wc -l)
+count=$(ls -1 "$rna" | wc -l)
 
 # Check if input file and isPE option is compatible
 if [[ $count -eq 1 ]] && [[ $isPE=="PE" ]]; then
-  echo "The directory $4 contains one file but the mode is Pair-end."
+  echo "The directory $rna contains one file but the mode is Pair-end."
   exit
 elif [[ $count -eq 2 ]] && [[ $isPE=="SE" ]]; then
-  echo "The directory $4 contains two files but the mode is Pair-end."
+  echo "The directory $rna contains two files but the mode is Pair-end."
   exit
 else
-  echo "The directory $4 contains $count files, proceed to next test."
+  echo "The directory $rna contains $count files, proceed to next test."
 fi
 
 
 # Check if all files in the directory end with ".fq" or ".fastq"
-if [[ $(find "$4" -maxdepth 1 -type f ! -name "*.fq" ! -name "*.fastq" | wc -l) -ne 0 ]]; then
-  echo "Not all files in $4 end with .fq or .fastq"
+if [[ $(find "$rna" -maxdepth 1 -type f ! -name "*.fq" ! -name "*.fastq" | wc -l) -ne 0 ]]; then
+  echo "Not all files in $rna end with .fq or .fastq"
   exit 1
 fi
 
-echo "All files in $4 end with .fq or .fastq, proceed to fastQC"
+echo "All files in $rna end with .fq or .fastq, proceed to fastQC"
 
 
 
